@@ -3,11 +3,11 @@ Ingesta de lecturas del sensor ultrasónico real (ESP32 + HC-SR04).
 
 Firmware real (ver proyecto_copy_....ino): el ESP32 mide distancia
 con un sensor ultrasónico sobre una MAQUETA a escala (altura de la
-maqueta: 0.25 m) y la escala matemáticamente a metros "reales"
-(altura real simulada: 12 m):
+maqueta: 0.15 m) y la escala matemáticamente a metros "reales"
+(altura real simulada: 15 m):
 
-    nivelMaqueta = ALTURA_MAQUETA - distancia_medida   (0 a 0.25 m)
-    nivelReal    = nivelMaqueta * ALTURA_REAL / ALTURA_MAQUETA   (0 a 12 m)
+    nivelMaqueta = ALTURA_MAQUETA - distancia_medida   (0 a 0.15 m)
+    nivelReal    = nivelMaqueta * ALTURA_REAL / ALTURA_MAQUETA   (0 a 15 m)
 
 El ESP32 ya hace esta conversión a bordo y expone el resultado
 (nivel en metros "reales") en su propio endpoint HTTP GET /nivel.

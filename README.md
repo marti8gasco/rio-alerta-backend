@@ -20,12 +20,12 @@ La API queda en `http://localhost:8000`. Documentación interactiva
 Sensor ultrasónico (HC-SR04) instalado en la base del puente, apuntando
 hacia abajo, conectado a un **ESP32** (no "CPL32" — fue una confusión de
 nombre). El ESP32 mide sobre una maqueta a escala (altura de la maqueta:
-0.25 m) y escala el resultado a metros "reales" (altura real simulada:
-12 m) **a bordo, antes de mandar el dato**:
+0.15 m) y escala el resultado a metros "reales" (altura real simulada:
+15 m) **a bordo, antes de mandar el dato**:
 
 ```
-nivelMaqueta = ALTURA_MAQUETA - distancia_medida       (0 a 0.25 m)
-nivelReal    = nivelMaqueta * ALTURA_REAL / ALTURA_MAQUETA   (0 a 12 m)
+nivelMaqueta = ALTURA_MAQUETA - distancia_medida       (0 a 0.15 m)
+nivelReal    = nivelMaqueta * ALTURA_REAL / ALTURA_MAQUETA   (0 a 15 m)
 ```
 
 Este backend **no recibe la distancia cruda** — recibe el nivel ya
@@ -55,7 +55,7 @@ Content-Type: application/json
 
 Es el **mismo JSON que ya devuelve el propio endpoint del ESP32**
 (`GET /nivel`), más el `station_id`. El campo `nivel` es el nivel en
-metros ya calculado por el firmware (0 a 12) — este backend no vuelve a
+metros ya calculado por el firmware (0 a 15) — este backend no vuelve a
 convertir nada, solo guarda el dato y recalcula el `status` con los
 umbrales configurados acá (por si difieren de los que tenga el firmware
 hardcodeados). El campo `alerta` es opcional/informativo.

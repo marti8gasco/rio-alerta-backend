@@ -69,8 +69,8 @@ class NotificationCreate(BaseModel):
 class SensorReadingCreate(BaseModel):
     station_id: str = Field(..., description="Id de la estacion, ej. 'km42'")
     nivel: float = Field(
-        ..., ge=0, le=12,
-        description="Nivel en metros ya calculado por el firmware del ESP32 (0 a 12)",
+        ..., ge=0, le=15,
+        description="Nivel en metros ya calculado por el firmware del ESP32 (0 a 15, segun escala real del .ino: maqueta 0.15 m -> 15 m reales)",
     )
     alerta: str | None = Field(
         None, description="Alerta calculada por el firmware (informativa; el backend recalcula la propia)"
