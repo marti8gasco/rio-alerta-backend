@@ -162,16 +162,30 @@ def all_readings():
 
 @app.get("/api/history")
 def history(station_id: str = "km42", hours: int = 24):
-    """Serie historica de nivel (m). hours=24 o hours=168 (7 dias)."""
+    """
+    Serie historica de nivel (m). hours=24 o hours=168 (7 dias).
+
+    Si la estacion ya tiene lecturas reales del sensor, se arma la serie
+    a partir de esas lecturas (acumuladas desde que el sensor empezo a
+    postear). Mientras no haya suficiente historial real todavia, se
+    devuelve la serie simulada como antes.
+    """
     if hours not in (24, 168):
         raise HTTPException(status_code=400, detail="hours debe ser 24 o 168")
-    try:
-        points = simulator.get_history(station_id, hours=hours)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    real_points = sensor.get_real_history(station_id, hours=hours)
+    if real_points is not None:
+        points = real_points
+        source = "sensor"
+    else:
+        try:
+            points = simulator.get_history(station_id, hours=hours)
+        except ValueError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+        source = "simulated"
     return {
         "station_id": station_id,
         "hours": hours,
+        "source": source,
         "points": points,
         "min": min(p["level_m"] for p in points),
         "max": max(p["level_m"] for p in points),

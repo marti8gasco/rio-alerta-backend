@@ -9,34 +9,22 @@ no desde el propio endpoint GET como se simplifica aca.
 
 from datetime import datetime, timedelta
 
+
+# Notificacion de ejemplo minima y neutra — el frontend ya arma sus propios
+# avisos de nivel/tendencia/lluvia a partir de los datos reales vigentes
+# (ver HidroTecApp en el frontend), asi que aca solo dejamos algo generico
+# que no contradiga esos numeros (antes habia avisos fijos que mencionaban
+# "caudal" y umbrales/estaciones que ya no existen en la app).
 _notifications = [
     {
         "id": 1,
-        "type": "warning",
-        "text": "Caudal superó el umbral de atención (150 m³/s)",
+        "type": "info",
+        "text": "Sensor de Km 42 reportando con normalidad",
         "timestamp": (datetime.utcnow() - timedelta(hours=2)).isoformat() + "Z",
-    },
-    {
-        "id": 2,
-        "type": "info",
-        "text": "Lluvia intensa reportada aguas arriba",
-        "timestamp": (datetime.utcnow() - timedelta(hours=4, minutes=30)).isoformat() + "Z",
-    },
-    {
-        "id": 3,
-        "type": "success",
-        "text": "Nivel normalizado tras lluvias de ayer",
-        "timestamp": (datetime.utcnow() - timedelta(days=1, hours=4)).isoformat() + "Z",
-    },
-    {
-        "id": 4,
-        "type": "info",
-        "text": "Mantenimiento programado en estación Km 18",
-        "timestamp": (datetime.utcnow() - timedelta(days=1, hours=14)).isoformat() + "Z",
     },
 ]
 
-_next_id = 5
+_next_id = 2
 
 
 def get_notifications() -> list[dict]:

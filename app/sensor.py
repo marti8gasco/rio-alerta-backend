@@ -27,12 +27,18 @@ backend con su lectura — así el ESP32 empuja el dato en vez de
 esperar que alguien se lo pida.
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# Buffer en memoria de la última lectura real recibida por estación.
-# En producción esto se persistiría en base de datos (tabla de series
-# de tiempo), pero para la demo alcanza con guardar la última lectura.
+# Buffer en memoria de la última lectura real recibida por estación, y de
+# el historial de lecturas reales de los últimos 7 días (para /api/history).
+# En producción esto se persistiría en base de datos (tabla de series de
+# tiempo) — ver nota de persistencia en README — pero para la demo alcanza
+# con guardar en memoria mientras el proceso está vivo.
 _last_readings: dict[str, dict] = {}
+_history: dict[str, list[dict]] = {}
+
+# Cuánto guardamos de historial real antes de empezar a descartar lo viejo.
+_HISTORY_RETENTION = timedelta(days=7)
 
 
 def record_sensor_reading(station_id: str, level_m: float) -> dict:
@@ -42,13 +48,20 @@ def record_sensor_reading(station_id: str, level_m: float) -> dict:
     (ver handleNivel() en el .ino) — este backend no vuelve a convertir
     nada, solo guarda y expone el dato.
     """
+    now = datetime.utcnow()
     reading = {
         "station_id": station_id,
         "level_m": round(level_m, 3),
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": now.isoformat() + "Z",
         "source": "sensor",
     }
     _last_readings[station_id] = reading
+
+    points = _history.setdefault(station_id, [])
+    points.append({"timestamp": reading["timestamp"], "level_m": reading["level_m"]})
+    cutoff = now - _HISTORY_RETENTION
+    _history[station_id] = [p for p in points if datetime.fromisoformat(p["timestamp"].rstrip("Z")) >= cutoff]
+
     return reading
 
 
@@ -58,3 +71,15 @@ def get_last_sensor_reading(station_id: str) -> dict | None:
 
 def has_real_data(station_id: str) -> bool:
     return station_id in _last_readings
+
+
+def get_real_history(station_id: str, hours: int) -> list[dict] | None:
+    """Puntos reales de las últimas `hours` horas para una estación, o None
+    si todavía no hay ninguna lectura real (para que el caller decida si
+    cae al historial simulado)."""
+    points = _history.get(station_id)
+    if not points:
+        return None
+    cutoff = datetime.utcnow() - timedelta(hours=hours)
+    filtered = [p for p in points if datetime.fromisoformat(p["timestamp"].rstrip("Z")) >= cutoff]
+    return filtered if filtered else points[-1:]
