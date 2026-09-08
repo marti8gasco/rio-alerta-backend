@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 
 STATIONS = {
     "km18": {"name": "Km 18", "base_level": 1.8, "lat": -34.55, "lon": -56.35},
-    "km42": {"name": "Km 42", "base_level": 3.0, "lat": -34.62, "lon": -56.28},
+    "km42": {"name": "Km 95", "base_level": 3.0, "lat": -34.62, "lon": -56.28},
     "km65": {"name": "Km 65", "base_level": 1.2, "lat": -34.70, "lon": -56.15},
 }
 
