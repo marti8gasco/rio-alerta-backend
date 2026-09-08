@@ -19,7 +19,7 @@ _notifications = [
     {
         "id": 1,
         "type": "info",
-        "text": "Sensor de Km 42 reportando con normalidad",
+        "text": "Sensor de Km 95 reportando con normalidad",
         "timestamp": (datetime.utcnow() - timedelta(hours=2)).isoformat() + "Z",
     },
 ]
